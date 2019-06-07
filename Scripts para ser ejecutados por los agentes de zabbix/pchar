@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+# este script utiliza PCHAR para obtener una estimacion del ancho de banda
+
+pchar_out=$( { sudo pchar 192.168.1.1 | grep "bw ="; } )
+
+# A continuacion se procesa la salida de PCHAR para tener solo el ancho de banda
+
+for i in $(seq 0 ${#pchar_out})
+
+	do
+		if [ "${pchar_out:i:1}" == "b" ]
+
+			then 
+
+				if [ "${pchar_out:i+1:1}" == "w" ]
+				
+					then
+					
+						if [ "${pchar_out:i+2:1}" == " " ]
+
+							then 
+
+                                                    		if [ "${pchar_out:i+3:1}" == "=" ]
+                        					
+									then
+										j=$((i+5))
+
+								fi
+
+						fi
+				fi
+
+										
+		fi
+	
+	done
+
+
+for i in $(seq $j ${#pchar_out})
+
+	do
+		if [ "${pchar_out:i:1}" == "." ]
+
+			then 
+
+				u=$((i+3))
+										
+		fi
+	
+	done
+
+bandwidth=${pchar_out:j:1}
+
+j=$((j+1))
+
+num=0123456789
+
+for i in $(seq $j $u)
+
+	do
+
+		for k in {0..10}
+
+			do
+
+					if [ "${pchar_out:i:1}" == "${num:k:1}" ]
+
+						then
+
+							bandwidth+=${pchar_out:i:1}
+
+					fi
+			
+			done
+
+	done
+
+echo $bandwidth
