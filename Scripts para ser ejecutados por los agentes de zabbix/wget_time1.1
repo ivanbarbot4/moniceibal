@@ -1,0 +1,429 @@
+#!/usr/bin/env bash
+url=www.google.com
+opcion='2'
+mkdir /home/wgetcarpeta
+if [ $opcion = '1' ];
+then
+	wget_out=$( { time wget -P /home/wgetcarpeta $url; } 2>&1 | tail -3 )
+elif [ $opcion == '2' ];
+then
+	wget_out=$( { time wget /home/wgetcarpeta $url; } 2>&1 | tail -3 )
+elif [ $opcion == '3' ];
+then
+	wget_out=$( { time wget -S /home/wgetcarpeta $url; } 2>&1 | tail -3 )
+fi
+
+{ echo santiago | sudo rm -R /home/wgetcarpeta/; } 2>&1
+
+#echo $wget_out
+
+salida_comando_time=$wget_out
+
+# inicio del bloque que toma la salida del comando time, ejemplo "real 0m0.087s user 0m0.012s sys 0m0.004s" y lo convierte en tres numeros (la idea es que este bloque reutilizable)
+
+num=0123456789
+
+i=0
+
+j=0
+
+while [ "${salida_comando_time:i:1}" != "${num:j:1}" ]
+
+	do
+
+		while [ "${salida_comando_time:i:1}" != "${num:j:1}" ] && [ $j -le ${#num} ]
+
+			do
+
+				j=$((j+1))
+
+			done
+
+		j=0
+
+		i=$((i+1))
+
+	done
+
+# sumo primera cifra de minutos
+
+real=${salida_comando_time:i:1}
+
+i=$((i+1))
+
+# sumo segundo cifra de minutos si la hay
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+				real+=${salida_comando_time:i:1}
+
+		fi
+
+	done
+
+i=$((i+1))
+
+# paso minutos a milisegundos
+
+real=$((real*60000))
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+				real=$((real+1000*${salida_comando_time:i:1}))
+
+		fi
+
+	done
+
+i=$((i+1))
+
+for j in $(seq 0 ${#num})
+
+        do
+
+                if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+                        then
+
+                                real=$((real-1000*${salida_comando_time:i-1:1}))
+                                real=$((real+10000*${salida_comando_time:i-1:1}))
+                                real=$((real+1000*${salida_comando_time:i:1}))
+                                i=$((i+1))
+                fi
+
+        done
+
+i=$((i+1))
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+			real=$((real+100*${salida_comando_time:i:1}))
+
+		fi
+
+	done
+
+i=$((i+1))
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+			real=$((real+10*${salida_comando_time:i:1}))
+
+		fi
+
+	done
+
+i=$((i+1))
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+				real=$((real+${salida_comando_time:i:1}))
+
+		fi
+
+	done
+
+i=$((i+1))
+
+# convierto user de string a numero
+
+while [ "${salida_comando_time:i:1}" != "${num:j:1}" ]
+
+	do
+
+		while [ "${salida_comando_time:i:1}" != "${num:j:1}" ] && [ $j -le ${#num} ]
+
+			do
+
+				j=$((j+1))
+
+			done
+
+		j=0
+
+		i=$((i+1))
+
+	done
+
+# sumo primera cifra de minutos
+
+user=${salida_comando_time:i:1}
+
+i=$((i+1))
+
+# sumo segundo cifra de minutos si la hay
+
+	for j in $(seq 0 ${#num})
+
+		do
+
+			if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+				then
+
+				user+=${salida_comando_time:i:1}
+
+			fi
+
+		done
+
+i=$((i+1))
+
+# paso minutos a milisegundos
+
+user=$((user*60000))
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+			user=$((user+1000*${salida_comando_time:i:1}))
+
+		fi
+
+	done
+
+i=$((i+1))
+
+for j in $(seq 0 ${#num})
+
+        do
+
+                if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+                        then
+
+                                user=$((user-1000*${salida_comando_time:i-1:1}))
+                                user=$((user+10000*${salida_comando_time:i-1:1}))
+                                user=$((user+1000*${salida_comando_time:i:1}))
+                                i=$((i+1))
+                fi
+
+        done
+
+i=$((i+1))
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+				user=$((user+100*${salida_comando_time:i:1}))
+
+		fi
+
+	done
+
+i=$((i+1))
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+				user=$((user+10*${salida_comando_time:i:1}))
+
+		fi
+
+	done
+
+i=$((i+1))
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+				user=$((user+${salida_comando_time:i:1}))
+
+		fi
+
+	done
+
+i=$((i+1))
+
+# convertio sys de string a numero
+
+while [ "${salida_comando_time:i:1}" != "${num:j:1}" ]
+
+	do
+
+		while [ "${salida_comando_time:i:1}" != "${num:j:1}" ] && [ $j -le ${#num} ]
+
+			do
+
+				j=$((j+1))
+
+			done
+
+		j=0
+
+		i=$((i+1))
+
+	done
+
+# sumo primera cifra de minutos
+
+sys=${salida_comando_time:i:1}
+
+i=$((i+1))
+
+# sumo segundo cifra de minutos si la hay
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+				sys+=${salida_comando_time:i:1}
+
+		fi
+
+	done
+
+i=$((i+1))
+
+# paso minutos a milisegundos
+
+sys=$((sys*60000))
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+				sys=$((sys+1000*${salida_comando_time:i:1}))
+
+		fi
+
+	done
+
+i=$((i+1))
+
+for j in $(seq 0 ${#num})
+
+        do
+
+                if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+                        then
+
+                                sys=$((sys-1000*${salida_comando_time:i-1:1}))
+                                sys=$((sys+10000*${salida_comando_time:i-1:1}))
+                                sys=$((sys+1000*${salida_comando_time:i:1}))
+                                i=$((i+1))
+                fi
+
+        done
+
+i=$((i+1))
+
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+				sys=$((sys+100*${salida_comando_time:i:1}))
+
+		fi
+
+	done
+
+i=$((i+1))
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+				sys=$((sys+10*${salida_comando_time:i:1}))
+
+			fi
+
+	done
+
+i=$((i+1))
+
+for j in $(seq 0 ${#num})
+
+	do
+
+		if [ "${salida_comando_time:i:1}" == "${num:j:1}" ]
+
+			then
+
+				sys=$((sys+${salida_comando_time:i:1}))
+
+		fi
+
+	done
+
+i=$((i+1))
+
+# fin del bloque que toma la salida del comando time, ejemplo "real 0m0.087s user 0m0.012s sys 0m0.004s" y lo convierte en tres numeros
+
+#echo $real
+#echo $user
+#echo $sys
+
+# bloque que realizar la operancion real-user-sys con el fin de obtener el tiempo efectivo de comunicacion entre la red
+
+real_time=$((real-user-sys))
+
+echo $real_time
